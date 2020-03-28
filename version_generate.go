@@ -33,8 +33,10 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer f.Close()
+	ver := getVersion()
 	fmt.Fprintf(f, "package main\n\n")
-	fmt.Fprintf(f, "const version = \"%s\"\n", getVersion())
+	fmt.Fprintf(f, "const version = \"%s\"\n", ver)
+	fmt.Println(ver)
 }
 
 func getVersion() string {
