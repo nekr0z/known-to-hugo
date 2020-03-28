@@ -1,3 +1,5 @@
 .*.swp
 version.go
 /known_website/
+/known-to-hugo
+/known-to-hugo.exe
