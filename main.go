@@ -98,7 +98,7 @@ func processPages(pages []string, defaultImage string) {
 		}
 	}
 	if len(errors) > 0 {
-		fmt.Printf("the following %v errors occured:\n", len(errors))
+		fmt.Printf("the following %v errors occurred:\n", len(errors))
 		for _, err := range errors {
 			fmt.Println(err)
 		}
@@ -161,9 +161,8 @@ func getWebmentions(sel *goquery.Selection) ([]byte, bool) {
 			panic(err)
 		}
 		return b, true
-	} else {
-		return nil, false
 	}
+	return nil, false
 }
 
 func getMention(sel *goquery.Selection) mention {

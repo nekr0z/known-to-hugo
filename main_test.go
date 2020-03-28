@@ -70,7 +70,9 @@ func assertGolden(t *testing.T, actual []byte, golden string) {
 
 	if *update {
 		if _, err := os.Stat(golden); os.IsNotExist(err) {
-			ioutil.WriteFile(golden, actual, 0644)
+			if err := ioutil.WriteFile(golden, actual, 0644); err != nil {
+				t.Fatal(err)
+			}
 		} else {
 			t.Log("file", golden, "exists, remove it to record new golden result")
 		}
