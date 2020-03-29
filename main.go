@@ -43,6 +43,8 @@ var (
 	draft                    bool
 )
 
+var version string = "custom"
+
 const frontMatterSeparator = "+++\n"
 
 type content struct {
