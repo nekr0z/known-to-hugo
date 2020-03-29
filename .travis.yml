@@ -26,16 +26,14 @@ script:
 before_deploy:
   - mkdir release
   - bash <(VER=$(go generate); for ARCH in amd64 386 arm arm64; do GOARCH=$ARCH go build -ldflags "-X main.version=$VER"; tar -czf release/known-to-hugo-$VER-linux-$ARCH.tar.gz known-to-hugo LICENSE README.md; done)
-  - bash <(VER=$(go generate); for ARCH in amd64 386; do GOOS=windows GOARCH=$ARCH go build -ldflags "-X main.version=$VER"; tar -czf release/known-to-hugo-$VER-linux-$ARCH.tar.gz known-to-hugo.exe LICENSE README.md; done)
-  - ls release
+  - bash <(VER=$(go generate); for ARCH in amd64 386; do GOOS=windows GOARCH=$ARCH go build -ldflags "-X main.version=$VER"; zip -q release/known-to-hugo-$VER-windows-$ARCH.zip known-to-hugo.exe LICENSE README.md; done)
 
 deploy:
   - provider: releases
-    api_key: GITHUB_TOKEN
+    api_key: $GITHUB_TOKEN
     file_glob: true
     file: release/*
     skip_cleanup: true
-    draft: true
     on:
       tags: true
 
