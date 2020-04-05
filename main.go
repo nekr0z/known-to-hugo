@@ -38,9 +38,9 @@ import (
 )
 
 var (
-	outputDir, website, what string
-	concurrency              int
-	draft                    bool
+	outputDir, website, what, inputDir, siteType string
+	concurrency                                  int
+	draft                                        bool
 )
 
 var version string = "custom"
@@ -61,7 +61,7 @@ type mention struct {
 	Type     string  `json:"type,omitempty"`
 	Property string  `json:"wm-property,omitempty"`
 	Author   author  `json:"author"`
-	Url      string  `json:"url"`
+	Url      string  `json:"url,omitempty"`
 	Date     string  `json:"wm-received"`
 	Content  content `json:"content,omitempty"`
 }
@@ -73,15 +73,31 @@ func main() {
 	flag.StringVar(&website, "w", "example.site", "website to scrape")
 	flag.StringVar(&outputDir, "p", "./known_website", "directory to save the results to")
 	flag.StringVar(&what, "ww", "/content/posts", "section of the site to scrape, use \"\" for default content)")
+	flag.StringVar(&inputDir, "dir", "", "input directory")
+	flag.StringVar(&siteType, "type", "", "kind of website")
 	flag.Parse()
 	if !strings.HasPrefix(website, "http://") && !strings.HasPrefix(website, "https://") {
 		website = "http://" + website
 	}
 
-	pages := getPostLinks(website + what)
-	defImg := getDefaultImage(website)
-	processPages(pages, defImg)
+	if inputDir != "" {
+		processDirectory()
+	} else {
+
+		pages := getPostLinks(website + what)
+		defImg := getDefaultImage(website)
+		processPages(pages, defImg)
+	}
 	fmt.Println("all done!")
+}
+
+func processDirectory() {
+	switch siteType {
+	case "diary.ru":
+		diaryDir(inputDir, outputDir)
+	default:
+		fmt.Println("not implemented")
+	}
 }
 
 func processPages(pages []string, defaultImage string) {
