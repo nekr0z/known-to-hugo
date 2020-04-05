@@ -62,6 +62,14 @@ func diaryDir(input, output string) {
 			fmt.Printf("%s: %v\n", outFile, err)
 		}
 
+		b = p.webmentions()
+		if len(b) > 0 {
+			outFile := filepath.Join(outPath, "comments.json")
+			if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
+				fmt.Printf("%s: %v\n", outFile, err)
+			}
+		}
+
 		return nil
 	})
 }
