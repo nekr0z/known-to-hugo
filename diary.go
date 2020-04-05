@@ -16,13 +16,26 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
+
+type diaryPage struct {
+	*goquery.Selection
+}
+
+type diaryComment struct {
+	*goquery.Selection
+}
 
 func diaryDir(input, output string) {
 	_ = filepath.Walk(input, func(path string, info os.FileInfo, err error) error {
@@ -74,11 +87,98 @@ func diaryDir(input, output string) {
 	})
 }
 
-func downloadImages(path string, images map[string]string) {
-	for fn, url := range images {
-		filename := filepath.Join(path, fn)
-		if err := downloadFile(filename, url); err != nil {
-			fmt.Printf("failed to fetch image: %s - %v", url, err)
-		}
+func (p diaryPage) canonicalUrl() string {
+	u, _ := p.Find(".singlePost").Find(".urlLink").Find("a").Attr("href")
+	uri, err := url.Parse(u)
+	if err != nil {
+		return ""
 	}
+	return strings.TrimPrefix(uri.Path, "/")
+}
+
+func (p diaryPage) title() string {
+	return p.Find(".postTitle").Find("h1").Text()
+}
+
+func (p diaryPage) date() time.Time {
+	s := p.Find(".singlePost")
+	date := s.Find(".postDate").Text()
+	d := strings.Split(date, ", ")
+	if len(d) != 2 {
+		return time.Now()
+	}
+	date = d[1]
+	mes := map[string]string{
+		"января":   "Jan",
+		"февраля":  "Feb",
+		"марта":    "Mar",
+		"апреля":   "Apr",
+		"мая":      "May",
+		"июня":     "Jun",
+		"июля":     "Jul",
+		"августа":  "Aug",
+		"сентября": "Sep",
+		"октября":  "Oct",
+		"ноября":   "Nov",
+		"декабря":  "Dec",
+	}
+	for mr, me := range mes {
+		date = strings.ReplaceAll(date, mr, me)
+	}
+
+	t := s.Find(".postTitle").Find("span").Text()
+
+	dt, _ := time.ParseInLocation("2 Jan 2006 15:04", date+" "+t, time.Local)
+	return dt
+}
+
+func (p diaryPage) content() pageContent {
+	s := p.Find(".singlePost").Find(".postInner")
+	return pageContent{s}
+}
+
+func (p diaryPage) webmentions() []byte {
+	var mentions = struct {
+		Type     string    `json:"type"`
+		Name     string    `json:"name"`
+		Children []mention `json:"children,omitempty"`
+	}{Type: "feed", Name: "Webmentions"}
+
+	p.Find(".singleComment").Each(func(i int, s *goquery.Selection) {
+		cmt := diaryComment{s}
+		m := getWebmention(cmt)
+		mentions.Children = append(mentions.Children, m)
+	})
+	if len(mentions.Children) > 0 {
+		b, err := json.MarshalIndent(mentions, "", " ")
+		if err != nil {
+			panic(err)
+		}
+		return b
+	}
+	return nil
+}
+
+func (dc diaryComment) author() author {
+	n := dc.Find(".authorName").Text()
+	p, _ := dc.Find(".commentAuthor").Find("img").Attr("src")
+	return author{"card", n, "", p}
+}
+
+func (dc diaryComment) content() content {
+	c := dc.Find(".postInner")
+	t := strings.TrimSpace(c.Text())
+	h, _ := c.Html()
+	h = strings.TrimSpace(h)
+	return content{t, h}
+}
+
+func (dc diaryComment) date() string {
+	d := dc.Find(".postTitle").Find("span").Text()
+	date, _ := time.ParseInLocation("2006-01-02 в 15:04", d, time.Local)
+	return date.String()
+}
+
+func (dc diaryComment) url() string {
+	return ""
 }

@@ -562,3 +562,12 @@ func downloadFile(filepath string, url string) error {
 	_, err = io.Copy(out, resp.Body)
 	return err
 }
+
+func downloadImages(path string, images map[string]string) {
+	for fn, url := range images {
+		filename := filepath.Join(path, fn)
+		if err := downloadFile(filename, url); err != nil {
+			fmt.Printf("failed to fetch image: %s - %v", url, err)
+		}
+	}
+}
