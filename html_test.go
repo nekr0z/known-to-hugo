@@ -57,11 +57,13 @@ func TestHugo(t *testing.T) {
 
 func TestCanonicalUrl(t *testing.T) {
 	tests := map[string]struct {
-		file string
-		want string
+		file      string
+		processor string
+		want      string
 	}{
-		"diary_comments": {"diary_comments.htm", "p706232_soundcheck.htm"},
-		"diary_pic":      {"diary_pic.htm", "p1225644_nachdenklichkeit.htm"},
+		"diary_comments": {"diary_comments.htm", "diary", "p706232_soundcheck.htm"},
+		"diary_pic":      {"diary_pic.htm", "diary", "p1225644_nachdenklichkeit.htm"},
+		"ljbackup":       {"ljbackup.html", "ljbackup", "170041.html"},
 	}
 
 	for name, tc := range tests {
@@ -70,7 +72,15 @@ func TestCanonicalUrl(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			p := diaryPage{s}
+			var p page
+			switch tc.processor {
+			case "diary":
+				p = diaryPage{s}
+			case "ljbackup":
+				p = ljbPage{s}
+			default:
+				t.Fatal("not implemented")
+			}
 			got := p.canonicalUrl()
 			if tc.want != got {
 				t.Fatalf("want %s, got %s\n", tc.want, got)
@@ -81,11 +91,12 @@ func TestCanonicalUrl(t *testing.T) {
 
 func TestProcessImages(t *testing.T) {
 	tests := map[string]struct {
-		file string
-		want map[string]string
+		file      string
+		processor string
+		want      map[string]string
 	}{
-		"diary_comments": {"diary_comments.htm", map[string]string{}},
-		"diary_pic":      {"diary_pic.htm", map[string]string{"image0": "https://secure.diary.ru/userdir/4/9/6/1/4961/95265.jpg"}},
+		"diary_comments": {"diary_comments.htm", "diary", map[string]string{}},
+		"diary_pic":      {"diary_pic.htm", "diary", map[string]string{"image0": "https://secure.diary.ru/userdir/4/9/6/1/4961/95265.jpg"}},
 	}
 
 	for name, tc := range tests {
@@ -94,7 +105,15 @@ func TestProcessImages(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			p := diaryPage{s}
+			var p page
+			switch tc.processor {
+			case "diary":
+				p = diaryPage{s}
+			case "ljbackup":
+				p = ljbPage{s}
+			default:
+				t.Fatal("not implemented")
+			}
 			cnt := p.content()
 			got := cnt.processImages()
 
@@ -113,11 +132,13 @@ func TestProcessImages(t *testing.T) {
 
 func TestWebmentions(t *testing.T) {
 	tests := map[string]struct {
-		file string
-		want string
+		file      string
+		processor string
+		want      string
 	}{
-		"diary_comments": {"diary_comments.htm", "diary_comments.json"},
-		"diary_pic":      {"diary_pic.htm", "diary_pic.json"},
+		"diary_comments": {"diary_comments.htm", "diary", "diary_comments.json"},
+		"diary_pic":      {"diary_pic.htm", "diary", "diary_pic.json"},
+		"ljbackup":       {"ljbackup.html", "ljbackup", "ljbackup.json"},
 	}
 
 	for name, tc := range tests {
@@ -126,7 +147,15 @@ func TestWebmentions(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			p := diaryPage{s}
+			var p page
+			switch tc.processor {
+			case "diary":
+				p = diaryPage{s}
+			case "ljbackup":
+				p = ljbPage{s}
+			default:
+				t.Fatal("not implemented")
+			}
 			g := filepath.Join("testdata", tc.want)
 			got := p.webmentions()
 			assertGolden(t, got, g)
