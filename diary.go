@@ -137,6 +137,10 @@ func (p diaryPage) content() pageContent {
 	return pageContent{s}
 }
 
+func (p diaryPage) tags() []string {
+	return nil
+}
+
 func (p diaryPage) webmentions() []byte {
 	var mentions = struct {
 		Type     string    `json:"type"`

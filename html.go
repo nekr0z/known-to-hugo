@@ -34,6 +34,8 @@ type page interface {
 	date() time.Time
 	content() pageContent
 	canonicalUrl() string
+	tags() []string
+	webmentions() []byte
 }
 
 type pageContent struct {
@@ -58,7 +60,7 @@ func getFM(p page, draft bool) []byte {
 	var frontMatter = map[string]interface{}{
 		"title": p.title(),
 		"date":  p.date(),
-		//		"tags":           getTags(sel),
+		"tags":  p.tags(),
 		//		"reply_to":       getInReply(sel),
 		//		"posse":          getSyndications(sel),
 		//		"like_of":        getLikeOf(sel),

@@ -66,3 +66,15 @@ func (p ljbPage) title() string {
 	}
 	return ""
 }
+
+func (p ljbPage) tags() []string {
+	var t []string
+	p.Find("td").Eq(3).Find("a").Each(func(_ int, s *goquery.Selection) {
+		t = append(t, s.Text())
+	})
+	return t
+}
+
+func (p ljbPage) webmentions() []byte {
+	return nil
+}
