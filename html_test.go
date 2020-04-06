@@ -24,11 +24,13 @@ import (
 
 func TestHugo(t *testing.T) {
 	tests := map[string]struct {
-		file string
-		want string
+		file      string
+		processor string
+		want      string
 	}{
-		"diary_comments": {"diary_comments.htm", "diary_comments.md"},
-		"diary_pic":      {"diary_pic.htm", "diary_pic.md"},
+		"diary_comments": {"diary_comments.htm", "diary", "diary_comments.md"},
+		"diary_pic":      {"diary_pic.htm", "diary", "diary_pic.md"},
+		"ljbackup":       {"ljbackup.html", "ljbackup", "ljbackup.md"},
 	}
 
 	for name, tc := range tests {
@@ -37,7 +39,15 @@ func TestHugo(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			p := diaryPage{s}
+			var p page
+			switch tc.processor {
+			case "diary":
+				p = diaryPage{s}
+			case "ljbackup":
+				p = ljbPage{s}
+			default:
+				t.Fatal("not implemented")
+			}
 			g := filepath.Join("testdata", tc.want)
 			got := hugo(p, false)
 			assertGolden(t, got, g)
