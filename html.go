@@ -17,7 +17,10 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +50,64 @@ type comment interface {
 	content() content
 	url() string
 	date() string
+}
+
+func blogDir(input, output, blogType string) {
+	_ = filepath.Walk(input, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Printf("%s: %v\n", path, err)
+			return nil
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		s, err := loadHtmlFile(filepath.Join(path))
+		if err != nil {
+			fmt.Printf("%s: %v\n", path, err)
+			return nil
+		}
+		var p page
+		switch blogType {
+		case "diary":
+			p = diaryPage{s}
+		case "ljbackup":
+			p = ljbPage{s}
+		default:
+			fmt.Println("not implemented")
+		}
+		url := p.canonicalUrl()
+		if url == "" || url != filepath.Base(path) {
+			return nil
+		}
+
+		outPath := filepath.Join(output, strconv.Itoa(p.date().Year()), strings.TrimSuffix(url, filepath.Ext(path)))
+		if err := os.MkdirAll(outPath, 0755); err != nil {
+			panic(err)
+		}
+
+		cnt := p.content()
+		images := cnt.processImages()
+		downloadImages(outPath, images)
+
+		outFile := filepath.Join(outPath, "index.md")
+
+		b := hugo(p, draft)
+		if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
+			fmt.Printf("%s: %v\n", outFile, err)
+		}
+
+		b = p.webmentions()
+		if len(b) > 0 {
+			outFile := filepath.Join(outPath, "comments.json")
+			if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
+				fmt.Printf("%s: %v\n", outFile, err)
+			}
+		}
+
+		return nil
+	})
 }
 
 func hugo(p page, draft bool) []byte {

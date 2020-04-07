@@ -18,6 +18,7 @@ package main
 import (
 	"encoding/json"
 	"net/url"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -38,11 +39,18 @@ func (p ljbPage) canonicalUrl() string {
 	if err != nil {
 		return ""
 	}
-	return strings.TrimPrefix(uri.Path, "/")
+	return filepath.Base(uri.Path)
 }
 
 func (p ljbPage) content() pageContent {
-	s := p.Find("body").Find("p").Eq(1).Clone()
+	s := p.Find("body").Clone()
+	s.Find("hr").NextAll().AndSelf().Remove()
+	s.Find("blockquote").PrevAll().AndSelf().Remove()
+	s.Find("td").Each(func(_ int, sel *goquery.Selection) {
+		if d := sel.Text(); d == "Entry tags:" {
+			sel.ParentsUntil("table").Remove()
+		}
+	})
 	s.Find("br").ReplaceWithHtml("<p>")
 	t := s.Find("font").Eq(0)
 	if t.Text() == p.title() {

@@ -94,7 +94,9 @@ func main() {
 func processDirectory() {
 	switch siteType {
 	case "diary.ru":
-		diaryDir(inputDir, outputDir)
+		blogDir(inputDir, outputDir, "diary")
+	case "lj_backup":
+		blogDir(inputDir, outputDir, "ljbackup")
 	default:
 		fmt.Println("not implemented")
 	}
@@ -567,7 +569,11 @@ func downloadImages(path string, images map[string]string) {
 	for fn, url := range images {
 		filename := filepath.Join(path, fn)
 		if err := downloadFile(filename, url); err != nil {
-			fmt.Printf("failed to fetch image: %s - %v", url, err)
+			fmt.Printf("failed to fetch image: %s - %v\n", url, err)
+			b := []byte(url)
+			if err := ioutil.WriteFile(filename, b, 0644); err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 }

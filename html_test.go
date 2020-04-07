@@ -31,6 +31,7 @@ func TestHugo(t *testing.T) {
 		"diary_comments": {"diary_comments.htm", "diary", "diary_comments.md"},
 		"diary_pic":      {"diary_pic.htm", "diary", "diary_pic.md"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "ljbackup.md"},
+		"ljb_formatting": {"ljb_f.html", "ljbackup", "ljb_f.md"},
 	}
 
 	for name, tc := range tests {
@@ -64,6 +65,7 @@ func TestCanonicalUrl(t *testing.T) {
 		"diary_comments": {"diary_comments.htm", "diary", "p706232_soundcheck.htm"},
 		"diary_pic":      {"diary_pic.htm", "diary", "p1225644_nachdenklichkeit.htm"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "170041.html"},
+		"ljb_strange":    {"ljb_strange.html", "ljbackup", "69149.html"},
 	}
 
 	for name, tc := range tests {

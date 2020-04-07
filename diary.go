@@ -17,12 +17,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/url"
-	"os"
-	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -35,56 +30,6 @@ type diaryPage struct {
 
 type diaryComment struct {
 	*goquery.Selection
-}
-
-func diaryDir(input, output string) {
-	_ = filepath.Walk(input, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			fmt.Printf("%s: %v\n", path, err)
-			return nil
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		s, err := loadHtmlFile(filepath.Join(path))
-		if err != nil {
-			fmt.Printf("%s: %v\n", path, err)
-			return nil
-		}
-		p := diaryPage{s}
-		url := p.canonicalUrl()
-		if url == "" || url != filepath.Base(path) {
-			return nil
-		}
-
-		outPath := filepath.Join(output, strconv.Itoa(p.date().Year()), strings.TrimSuffix(url, filepath.Ext(path)))
-		if err := os.MkdirAll(outPath, 0755); err != nil {
-			panic(err)
-		}
-
-		cnt := p.content()
-		images := cnt.processImages()
-		downloadImages(outPath, images)
-
-		outFile := filepath.Join(outPath, "index.md")
-
-		b := hugo(p, draft)
-		if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
-			fmt.Printf("%s: %v\n", outFile, err)
-		}
-
-		b = p.webmentions()
-		if len(b) > 0 {
-			outFile := filepath.Join(outPath, "comments.json")
-			if err := ioutil.WriteFile(outFile, b, 0644); err != nil {
-				fmt.Printf("%s: %v\n", outFile, err)
-			}
-		}
-
-		return nil
-	})
 }
 
 func (p diaryPage) canonicalUrl() string {
