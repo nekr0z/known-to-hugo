@@ -32,6 +32,8 @@ func TestHugo(t *testing.T) {
 		"diary_pic":      {"diary_pic.htm", "diary", "diary_pic.md"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "ljbackup.md"},
 		"ljb_formatting": {"ljb_f.html", "ljbackup", "ljb_f.md"},
+		"gp_likes":       {"gp1.html", "gplus", "gp1.md"},
+		"gp_comment":     {"gp2.html", "gplus", "gp2.md"},
 	}
 
 	for name, tc := range tests {
@@ -46,6 +48,8 @@ func TestHugo(t *testing.T) {
 				p = diaryPage{s}
 			case "ljbackup":
 				p = ljbPage{s}
+			case "gplus":
+				p = gpPage{s}
 			default:
 				t.Fatal("not implemented")
 			}
@@ -66,6 +70,7 @@ func TestCanonicalUrl(t *testing.T) {
 		"diary_pic":      {"diary_pic.htm", "diary", "p1225644_nachdenklichkeit.htm"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "170041.html"},
 		"ljb_strange":    {"ljb_strange.html", "ljbackup", "69149.html"},
+		"gp_likes":       {"gp1.html", "gplus", "https://plus.google.com/101429873540479442683/posts/PGs99nrjdi6"},
 	}
 
 	for name, tc := range tests {
@@ -80,6 +85,8 @@ func TestCanonicalUrl(t *testing.T) {
 				p = diaryPage{s}
 			case "ljbackup":
 				p = ljbPage{s}
+			case "gplus":
+				p = gpPage{s}
 			default:
 				t.Fatal("not implemented")
 			}
@@ -141,6 +148,8 @@ func TestWebmentions(t *testing.T) {
 		"diary_comments": {"diary_comments.htm", "diary", "diary_comments.json"},
 		"diary_pic":      {"diary_pic.htm", "diary", "diary_pic.json"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "ljbackup.json"},
+		"gp_likes":       {"gp1.html", "gplus", "gp1.json"},
+		"gp_comment":     {"gp2.html", "gplus", "gp2.json"},
 	}
 
 	for name, tc := range tests {
@@ -155,6 +164,8 @@ func TestWebmentions(t *testing.T) {
 				p = diaryPage{s}
 			case "ljbackup":
 				p = ljbPage{s}
+			case "gplus":
+				p = gpPage{s}
 			default:
 				t.Fatal("not implemented")
 			}
