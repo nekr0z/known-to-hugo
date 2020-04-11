@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -34,11 +35,12 @@ func (p gpPage) canonicalUrl() string {
 	var u string
 	sel := p.Clone()
 	sel.Find(".comments").Remove()
-	p.Find("span").Each(func(_ int, s *goquery.Selection) {
+	sel.Find("span").Each(func(_ int, s *goquery.Selection) {
 		if at, _ := s.Attr("itemprop"); at == "dateCreated" {
 			u, _ = s.Parent().Attr("href")
 		}
 	})
+	u = string(u[strings.LastIndex(u, "/")+1:])
 	return u
 }
 

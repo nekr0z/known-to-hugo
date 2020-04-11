@@ -70,7 +70,8 @@ func TestCanonicalUrl(t *testing.T) {
 		"diary_pic":      {"diary_pic.htm", "diary", "p1225644_nachdenklichkeit.htm"},
 		"ljbackup":       {"ljbackup.html", "ljbackup", "170041.html"},
 		"ljb_strange":    {"ljb_strange.html", "ljbackup", "69149.html"},
-		"gp_likes":       {"gp1.html", "gplus", "https://plus.google.com/101429873540479442683/posts/PGs99nrjdi6"},
+		"gplus":          {"gp1.html", "gplus", "PGs99nrjdi6"},
+		"gplus_strange":  {"gp3.html", "gplus", "Cayiw7vFVQK"},
 	}
 
 	for name, tc := range tests {

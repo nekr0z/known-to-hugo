@@ -97,6 +97,8 @@ func processDirectory() {
 		blogDir(inputDir, outputDir, "diary")
 	case "lj_backup":
 		blogDir(inputDir, outputDir, "ljbackup")
+	case "gplus":
+		blogDir(inputDir, outputDir, "gplus")
 	default:
 		fmt.Println("not implemented")
 	}

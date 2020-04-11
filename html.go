@@ -74,11 +74,13 @@ func blogDir(input, output, blogType string) {
 			p = diaryPage{s}
 		case "ljbackup":
 			p = ljbPage{s}
+		case "gplus":
+			p = gpPage{s}
 		default:
 			fmt.Println("not implemented")
 		}
 		url := p.canonicalUrl()
-		if url == "" || url != filepath.Base(path) {
+		if (url == "" || url != filepath.Base(path)) && blogType != "gplus" {
 			return nil
 		}
 
