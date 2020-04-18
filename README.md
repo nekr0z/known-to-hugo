@@ -47,6 +47,25 @@ mark all the downloaded pages as drafts for Hugo.
 ```
 number of pages to try to process simultaneously. Your server that runs Known might not like `known-to-hugo`'s attempt to download all the posts simultaneously (for example, the [DreamHost](https://www.dreamhost.com/) shared web hosting I use starts serving `503`s instead of pages when I try about 20 processes in parallel), so this option limits the number of pages processed in parallel. Default is `15`.
 
+### Local backups processing
+If you happen to have a local backup of your old blog, these are some experimental options for you:
+```
+-dir [path]
+```
+tells `known-to-hugo` to work with a local directory rather than a running website. The `-w` and `-ww` options are ignored in this case; site type (below) must be specified:
+```
+-type gplus
+```
+the local backup is Google Plus posts directory (as composed with Google Takeout), or
+```
+-type lj_backup
+```
+the local backup is a LiveJournal backup made with `ljArchive`, or
+```
+-type diary.ru
+```
+the local backup is a whole-site `wget` copy of a diary.ru-hosted blog.
+
 ## Development
 Pull requests are always welcome!
 
