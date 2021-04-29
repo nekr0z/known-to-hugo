@@ -1,7 +1,7 @@
 # known-to-hugo
 a little tool to help migrate your [Known](https://withknown.com/) website to [Hugo](https://gohugo.io/)
 
-[![Build Status](https://travis-ci.org/nekr0z/known-to-hugo.svg?branch=master)](https://travis-ci.org/nekr0z/known-to-hugo) [![codecov](https://codecov.io/gh/nekr0z/known-to-hugo/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/known-to-hugo) [![Go Report Card](https://goreportcard.com/badge/github.com/nekr0z/known-to-hugo)](https://goreportcard.com/report/github.com/nekr0z/known-to-hugo)
+[![Build Status](https://travis-ci.com/nekr0z/known-to-hugo.svg?branch=master)](https://travis-ci.com/nekr0z/known-to-hugo) [![codecov](https://codecov.io/gh/nekr0z/known-to-hugo/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/known-to-hugo) [![Go Report Card](https://goreportcard.com/badge/github.com/nekr0z/known-to-hugo)](https://goreportcard.com/report/github.com/nekr0z/known-to-hugo)
 
 ##### Table of Contents
 * [Why](#why)
