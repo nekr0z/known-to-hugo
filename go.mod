@@ -1,4 +1,4 @@
-module github.com/nekr0z/known-to-hugo
+module evgenykuznetsov.org/go/known-to-hugo
 
 go 1.14
 
