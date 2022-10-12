@@ -1,5 +1,5 @@
 +++
-date = 2005-10-30T21:28:00Z
+date = 2005-10-31T00:28:00+03:00
 draft = false
 tags = ["attitude"]
 title = "Spiel' ein Spiel mit mir"
